@@ -8,7 +8,6 @@ import { toast } from "sonner";
 import { apiRequest, getApiUser } from "@/lib/api";
 import { useAuth } from "@/context/AuthContext";
 
-
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -42,14 +41,85 @@ export default function LoginPage() {
     }
   };
 
-  
-  const handleGoogleLogin = () => {
-    const authUrl = process.env.NEXT_PUBLIC_GOOGLE_AUTH_URL;
-    if (!authUrl) {
-      toast.error('Google sign-in is not configured for this application.');
+  const handleGoogleLogin = async () => {
+    const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
+    if (!clientId) {
+      toast.error("Google Client ID is not configured.");
       return;
     }
-    window.location.assign(authUrl);
+
+    try {
+      const google = (
+        window as Window & {
+          google?: {
+            accounts: {
+              oauth2: {
+                initTokenClient: (config: {
+                  client_id: string;
+                  scope: string;
+                  callback: (response: { access_token?: string }) => void;
+                }) => { requestAccessToken: () => void };
+              };
+            };
+          };
+        }
+      ).google;
+
+      if (!google) {
+        toast.error("Google Sign-In is unavailable.");
+        return;
+      }
+
+      setLoading(true);
+      const client = google.accounts.oauth2.initTokenClient({
+        client_id: clientId,
+        scope: "email profile openid",
+        callback: async (response) => {
+          if (response.access_token) {
+            try {
+              const userInfoRes = await fetch(
+                "https://www.googleapis.com/oauth2/v3/userinfo",
+                {
+                  headers: { Authorization: `Bearer ${response.access_token}` },
+                },
+              );
+              const googleUser = await userInfoRes.json();
+
+              const backendResponse = await apiRequest<unknown>("/auth/google", {
+                method: "POST",
+                body: JSON.stringify({
+                  email: googleUser.email,
+                  name: googleUser.name,
+                  photoUrl: googleUser.picture,
+                }),
+              });
+
+              const user = getApiUser(backendResponse);
+              if (!user) {
+                throw new Error("Google sign-in failed on the server.");
+              }
+
+              login(user);
+              toast.success("Successfully logged in with Google!");
+              router.push("/");
+            } catch (err: unknown) {
+              toast.error(
+                err instanceof Error
+                  ? err.message
+                  : "Google authentication failed.",
+              );
+            } finally {
+              setLoading(false);
+            }
+          }
+        },
+      });
+
+      client.requestAccessToken();
+    } catch {
+      toast.error("Unable to initialize Google Sign-In.");
+      setLoading(false);
+    }
   };
 
   return (
@@ -160,4 +230,3 @@ export default function LoginPage() {
     </div>
   );
 }
-

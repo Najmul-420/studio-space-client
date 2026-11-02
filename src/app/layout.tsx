@@ -13,6 +13,7 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
+      <script src="https://accounts.google.com/gsi/client" async defer></script>
       <body className="flex min-h-screen flex-col bg-background text-foreground antialiased">
         <AuthProvider>
           <ThemeProvider>

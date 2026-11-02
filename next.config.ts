@@ -1,4 +1,32 @@
 
+// import type { NextConfig } from "next";
+
+// const nextConfig: NextConfig = {
+//   /* config options here */
+//   reactCompiler: true,
+//   turbopack: {
+//     rules: {
+//       "*.css": {
+//         loaders: ["@tailwindcss/turbopack"],
+//         as: "*.css",
+//       },
+//     },
+//   },
+//   images: {
+//     remotePatterns: [
+//       {
+//         protocol: 'https',
+//         hostname: 'images.unsplash.com',
+//       },
+//     ],
+//   },
+// };
+
+// export default nextConfig;
+
+
+
+
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
@@ -16,31 +44,11 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
-      },
+        hostname: '**',
+      }
+     
     ],
   },
 };
 
 export default nextConfig;
-
-
-
-
-// import type { NextConfig } from "next";
-
-// const nextConfig: NextConfig = {
-//   /* config options here */
-//   reactCompiler: true,
-//   turbopack: {
-//     rules: {
-//       "*.css": {
-//         loaders: ["@tailwindcss/turbopack"],
-//         as: "*.css",
-//       },
-//     },
-//   },
-// };
-
-// export default nextConfig;
-
