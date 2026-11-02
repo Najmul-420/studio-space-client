@@ -1,146 +1,101 @@
-// 'use client';
-
-// import { useState } from 'react';
-// import { useRouter } from 'next/navigation';
-// import Link from 'next/link';
-// import { toast } from 'sonner';
-
-// export default function RegisterPage() {
-//   const [name, setName] = useState('');
-//   const [email, setEmail] = useState('');
-//   const [password, setPassword] = useState('');
-//   const router = useRouter();
-
-//   const handleRegister = (e: React.FormEvent) => {
-//     e.preventDefault();
-//     const hasUpperCase = /[A-Z]/.test(password);
-//     const hasLowerCase = /[a-z]/.test(password);
-//     const isValidLength = password.length >= 6;
-
-//     if (!hasUpperCase || !hasLowerCase || !isValidLength) {
-//       toast.error('পাসওয়ার্ডে অন্তত ১টি বড় হাতের, ১টি ছোট হাতের অক্ষর এবং ন্যূনতম ৬টি ক্যারেক্টার থাকতে হবে!');
-//       return;
-//     }
-
-//     toast.success('রেজিস্ট্রেশন সফল হয়েছে! দয়া করে লগইন করুন।');
-//     router.push('/login');
-//   };
-
-//   return (
-//     <div className="min-h-[75vh] flex items-center justify-center px-4 py-8">
-//       <div className="max-w-md w-full bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">
-//         <h2 className="text-2xl font-bold text-center mb-6">Create Account</h2>
-//         <form onSubmit={handleRegister} className="space-y-4">
-//           <div>
-//             <label className="block text-sm font-medium mb-1">Full Name</label>
-//             <input type="text" value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border dark:bg-slate-800 dark:border-slate-700" required />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium mb-1">Email</label>
-//             <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border dark:bg-slate-800 dark:border-slate-700" required />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium mb-1">Password</label>
-//             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-2.5 rounded-xl border dark:bg-slate-800 dark:border-slate-700" required />
-//           </div>
-//           <button type="submit" className="w-full py-3 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-xl shadow transition">Register</button>
-//         </form>
-//         <p className="text-center text-sm mt-4 text-slate-500">
-//           Already have an account? <Link href="/login" className="text-sky-600 font-semibold">Login</Link>
-//         </p>
-//       </div>
-//     </div>
-//   );
-// }
-
-
-
-
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { Eye, EyeOff, Focus } from 'lucide-react';
 import { toast } from 'sonner';
-import { Eye, EyeOff } from 'lucide-react'; // <-- ১. আইকনগুলো ইমপোর্ট করা হলো
+import { apiRequest } from '@/lib/api';
 
 export default function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [photoUrl, setPhotoUrl] = useState('');
   const [password, setPassword] = useState('');
-  const [showPassword, setShowPassword] = useState(false); // <-- ২. পাসওয়ার্ড দেখানোর স্টেট
+  const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const handleRegister = (e: React.FormEvent) => {
-    e.preventDefault();
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const isValidLength = password.length >= 6;
+  const passwordIsValid = password.length >= 6 && /[A-Z]/.test(password) && /[a-z]/.test(password);
 
-    if (!hasUpperCase || !hasLowerCase || !isValidLength) {
-      toast.error('পাসওয়ার্ডে অন্তত ১টি বড় হাতের, ১টি ছোট হাতের অক্ষর এবং ন্যূনতম ৬টি ক্যারেক্টার থাকতে হবে!');
+  const handleRegister = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!passwordIsValid) {
+      toast.error('Use at least 6 characters, including an uppercase and a lowercase letter.');
       return;
     }
 
-    toast.success('রেজিস্ট্রেশন সফল হয়েছে! দয়া করে লগইন করুন।');
-    router.push('/login');
+    setLoading(true);
+    try {
+      await apiRequest<unknown>('/users', {
+        method: 'POST',
+        body: JSON.stringify({ name, email, photoUrl, password }),
+      });
+      toast.success('Account created. Sign in to continue.');
+      router.push('/login');
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Unable to create your account.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleGoogleRegister = () => {
+    const authUrl = process.env.NEXT_PUBLIC_GOOGLE_AUTH_URL;
+    if (!authUrl) {
+      toast.error('Google sign-in is not configured for this application.');
+      return;
+    }
+    window.location.assign(authUrl);
   };
 
   return (
-    <div className="min-h-[75vh] flex items-center justify-center px-4 py-8">
-      <div className="max-w-md w-full bg-white dark:bg-slate-900 p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">
-        <h2 className="text-2xl font-bold text-center mb-6">Create Account</h2>
+    <div className="mx-auto flex min-h-[72vh] max-w-7xl items-center justify-center px-5 py-12 sm:px-8">
+      <div className="w-full max-w-lg rounded-3xl border border-slate-200 bg-white p-7 shadow-xl shadow-slate-200/50 dark:border-slate-800 dark:bg-slate-900 dark:shadow-black/10 sm:p-9">
+        <div className="mb-7 text-center">
+          <span className="mx-auto inline-flex rounded-2xl bg-sky-50 p-3 text-sky-700 dark:bg-sky-950 dark:text-sky-300"><Focus size={25} /></span>
+          <p className="mt-5 text-sm font-bold uppercase tracking-[0.18em] text-sky-600">Join the creative community</p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white">Create your account</h1>
+          <p className="mt-2 text-sm text-slate-500 dark:text-slate-400">Find a space to make your next idea real.</p>
+        </div>
+
         <form onSubmit={handleRegister} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Full Name</label>
-            <input 
-              type="text" 
-              value={name} 
-              onChange={(e) => setName(e.target.value)} 
-              className="w-full px-4 py-2.5 rounded-xl border dark:bg-slate-800 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500" 
-              required 
-            />
+            <label htmlFor="name" className="mb-1.5 block text-sm font-semibold">Full name</label>
+            <input id="name" type="text" autoComplete="name" value={name} onChange={(event) => setName(event.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 dark:border-slate-700 dark:bg-slate-950" required />
           </div>
           <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
-            <input 
-              type="email" 
-              value={email} 
-              onChange={(e) => setEmail(e.target.value)} 
-              className="w-full px-4 py-2.5 rounded-xl border dark:bg-slate-800 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500" 
-              required 
-            />
+            <label htmlFor="email" className="mb-1.5 block text-sm font-semibold">Email address</label>
+            <input id="email" type="email" autoComplete="email" value={email} onChange={(event) => setEmail(event.target.value)} className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 dark:border-slate-700 dark:bg-slate-950" required />
           </div>
-          
-          {/* পাসওয়ার্ড ফিল্ড এবং টগল বাটন */}
+         
           <div>
-            <label className="block text-sm font-medium mb-1">Password</label>
+            <label htmlFor="password" className="mb-1.5 block text-sm font-semibold">Password</label>
             <div className="relative">
-              <input 
-                // ৩. স্টেট অনুযায়ী input-এর type 'text' বা 'password' হবে
-                type={showPassword ? 'text' : 'password'} 
-                value={password} 
-                onChange={(e) => setPassword(e.target.value)} 
-                className="w-full px-4 py-2.5 pr-10 rounded-xl border dark:bg-slate-800 dark:border-slate-700 focus:outline-none focus:ring-2 focus:ring-sky-500" 
-                required 
-              />
-              {/* ৪. চোখের আইকন বাটন */}
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-700 dark:hover:text-slate-300"
-              >
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              <input id="password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" value={password} onChange={(event) => setPassword(event.target.value)} aria-describedby="password-requirements" className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 pr-12 outline-none transition focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 dark:border-slate-700 dark:bg-slate-950" required />
+              <button type="button" onClick={() => setShowPassword((visible) => !visible)} aria-label={showPassword ? 'Hide password' : 'Show password'} className="absolute right-3 top-1/2 -translate-y-1/2 rounded-md p-1 text-slate-500 hover:text-slate-800 dark:hover:text-white">
+                {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
               </button>
             </div>
+            <p id="password-requirements" className={`mt-2 text-xs ${password && !passwordIsValid ? 'text-rose-600' : 'text-slate-500 dark:text-slate-400'}`}>
+              At least 6 characters, with one uppercase and one lowercase letter.
+            </p>
           </div>
-
-          <button type="submit" className="w-full py-3 bg-sky-600 hover:bg-sky-700 text-white font-bold rounded-xl shadow transition">Register</button>
+          <button type="submit" disabled={loading} className="w-full rounded-xl bg-sky-600 py-3.5 font-bold text-white shadow-lg shadow-sky-600/20 transition hover:bg-sky-700 disabled:cursor-wait disabled:opacity-60">
+            {loading ? 'Creating account…' : 'Create account'}
+          </button>
         </form>
-        <p className="text-center text-sm mt-4 text-slate-500">
-          Already have an account? <Link href="/login" className="text-sky-600 font-semibold">Login</Link>
+
+        <div className="my-5 flex items-center gap-3 text-xs text-slate-400"><span className="h-px flex-1 bg-slate-200 dark:bg-slate-800" />OR<span className="h-px flex-1 bg-slate-200 dark:bg-slate-800" /></div>
+        <button type="button" onClick={handleGoogleRegister} className="flex w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white py-3 font-semibold transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:hover:bg-slate-800">
+          <span className="font-bold text-slate-700 dark:text-slate-200">G</span> Continue with Google
+        </button>
+        <p className="mt-6 text-center text-sm text-slate-500 dark:text-slate-400">
+          Already have an account? <Link href="/login" className="font-bold text-sky-700 hover:underline dark:text-sky-400">Sign in</Link>
         </p>
       </div>
     </div>
   );
 }
+
+

@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# StudioSpace
 
-## Getting Started
+StudioSpace is a responsive marketplace frontend for discovering and booking independent creative studios. It is built with Next.js App Router, React, TypeScript, Tailwind CSS, Lucide icons, and Sonner notifications.
 
-First, run the development server:
+**Live site:** Not deployed yet.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Browse photo studios, film stages, podcast rooms, music suites, and art workshops.
+- Search and filter studio listings, inspect studio details, amenities, host information, and reviews.
+- Request bookings by date and time, and manage pending reservations.
+- Register, sign in, and manage studio listings with create, edit, and delete screens.
+- Switch between light and dark themes; layouts adapt for mobile, tablet, and desktop.
+- Branded loading, API error, and empty states with toast feedback for actions.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Local setup
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. Install Node.js 20 or newer.
+2. Install dependencies with `npm install`.
+3. Create `.env.local` and set `NEXT_PUBLIC_API_URL=http://localhost:5000` (or your deployed API origin).
+4. Start the frontend with `npm run dev`, then open `http://localhost:3000`.
+5. Run `npm run lint`, `npx tsc --noEmit`, and `npm run build` to validate the client.
 
-## Learn More
+The API server is a separate project and is not included in this repository. The frontend sends cookie-enabled requests to the configured API origin. The server must support credentialed CORS and issue/clear its authentication cookie on sign-in/sign-out.
 
-To learn more about Next.js, take a look at the following resources:
+## API integration
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The client expects JSON endpoints for `POST /users`, `POST /auth/login`, `POST /auth/logout`, `GET /studios`, `GET /studios/:id`, `POST /studios`, `PUT /studios/:id`, `DELETE /studios/:id`, `GET /my-listings`, `GET /my-bookings`, `POST /bookings`, `PATCH /bookings/:id`, and `POST /newsletter`.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The API must enforce authorization on private reads and mutations; client-supplied email and host fields are display/form data, not proof of identity. Booking overlap prevention must be enforced by the server. Google sign-in can be enabled by setting `NEXT_PUBLIC_GOOGLE_AUTH_URL` to the server's OAuth start URL.
 
-## Deploy on Vercel
+## Examiner access
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Test credentials:** No examiner account is seeded in this client repository. Create an account on `/register` after connecting the API, or use credentials supplied by the API/deployment owner.
+- **Client repository:** `Najmul-420/studio-space-client`
+- **Live URL:** Not available until the application is deployed.

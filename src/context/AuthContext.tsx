@@ -1,44 +1,87 @@
-
-
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useSyncExternalStore } from 'react';
+import { apiRequest } from '@/lib/api';
+import type { User } from '@/types/studio';
 
-interface User {
-  name: string;
-  email: string;
-  photoUrl?: string;
-}
+const STORAGE_KEY = 'studio_user';
+const AUTH_EVENT = 'studiospace:auth-change';
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (userData: User) => void;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+function subscribeToAuth(callback: () => void) {
+  window.addEventListener('storage', callback);
+  window.addEventListener(AUTH_EVENT, callback);
+  return () => {
+    window.removeEventListener('storage', callback);
+    window.removeEventListener(AUTH_EVENT, callback);
+  };
+}
 
-  useEffect(() => {
-    const savedUser = localStorage.getItem('studio_user');
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
+function getStoredUser(): string | null {
+  try {
+    return localStorage.getItem(STORAGE_KEY);
+  } catch (error) {
+    console.error('Unable to read the saved StudioSpace user.', error);
+    return null;
+  }
+}
+
+function getUser(serializedUser: string | null | undefined): User | null {
+  if (!serializedUser) return null;
+  try {
+    const user: unknown = JSON.parse(serializedUser);
+    if (
+      typeof user === 'object' &&
+      user !== null &&
+      'name' in user &&
+      typeof user.name === 'string' &&
+      'email' in user &&
+      typeof user.email === 'string'
+    ) {
+      return {
+        name: user.name,
+        email: user.email,
+        photoUrl: 'photoUrl' in user && typeof user.photoUrl === 'string' ? user.photoUrl : undefined,
+      };
     }
-    setLoading(false);
-  }, []);
+    console.error('The saved StudioSpace user has an invalid format.');
+  } catch (error) {
+    console.error('Unable to parse the saved StudioSpace user.', error);
+  }
+  return null;
+}
+
+export function AuthProvider({ children }: { children: React.ReactNode }) {
+  const serializedUser = useSyncExternalStore<string | null | undefined>(
+    subscribeToAuth,
+    getStoredUser,
+    () => undefined,
+  );
+  const loading = serializedUser === undefined;
+  const user = getUser(serializedUser);
 
   const login = (userData: User) => {
-    setUser(userData);
-    localStorage.setItem('studio_user', JSON.stringify(userData));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+      window.dispatchEvent(new Event(AUTH_EVENT));
+    } catch (error) {
+      console.error('Unable to save the StudioSpace user.', error);
+      throw new Error('Your session could not be saved in this browser.', { cause: error });
+    }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('studio_user');
+  const logout = async () => {
+    await apiRequest('/logout', { method: 'POST' });
+    localStorage.removeItem(STORAGE_KEY);
+    window.dispatchEvent(new Event(AUTH_EVENT));
   };
 
   return (
@@ -46,10 +89,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = () => {
+export function useAuth() {
   const context = useContext(AuthContext);
   if (!context) throw new Error('useAuth must be used within AuthProvider');
   return context;
-};
+}
