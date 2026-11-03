@@ -69,31 +69,7 @@ export default function MyBookingsPage() {
     };
   }, [user]);
 
-  // const cancelBooking = async (booking: Booking) => {
-  //   setCancellingId(booking._id);
-  //   try {
-  //     await apiRequest<unknown>(
-  //       `/bookings/cancel/${encodeURIComponent(booking._id)}`,
-  //       {
-  //         method: "PATCH",
-  //         body: JSON.stringify({ status: "Cancelled" }),
-  //       },
-  //     );
-  //     setBookings((current) =>
-  //       current.filter((item) => item._id !== booking._id),
-  //     );
-  //     toast.success("Booking cancelled.");
-  //   } catch (requestError) {
-  //     toast.error(
-  //       requestError instanceof Error
-  //         ? requestError.message
-  //         : "Unable to cancel this booking.",
-  //     );
-  //   } finally {
-  //     setCancellingId("");
-  //   }
-  // };
-
+  
   const cancelBooking = async (booking: Booking) => {
     setCancellingId(booking._id);
     try {

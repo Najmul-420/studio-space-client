@@ -292,9 +292,9 @@ export default function HowItWorksPage() {
     <div className="min-h-screen bg-[#07090e] text-slate-100 transition-colors duration-300 font-sans selection:bg-sky-500 selection:text-white">
       
       {/* --- HERO SECTION --- */}
-      <section className="relative py-20 px-4 md:px-8 bg-gradient-to-b from-[#0d1322] via-[#090d16] to-[#07090e] border-b border-[#172033] text-center overflow-hidden">
+      <section className="relative py-20 px-4 md:px-8 bg-linear-to-b from-[#0d1322] via-[#090d16] to-[#07090e] border-b border-[#172033] text-center overflow-hidden">
         {/* Decorative Grid Pattern */}
-        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] [background-size:24px_24px]"></div>
+        <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#38bdf8_1px,transparent_1px)] bg-size-[24px_24px]"></div>
         
         <div className="max-w-4xl mx-auto relative z-10">
           <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-500/10 text-sky-400 text-xs md:text-sm font-medium mb-6 border border-sky-500/20 shadow-sm">

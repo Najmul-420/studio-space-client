@@ -197,13 +197,14 @@ export default function MyListingsPage() {
 
   // ২. ইউজার পাওয়ার পর এবং authLoading শেষ হওয়ার পর সঠিকভাবে ডেটা ফেচ করবে
   useEffect(() => {
-    if (authLoading || !user?.email) return;
+    const email = user?.email;
+    if (authLoading || !email) return;
 
     let active = true;
     async function loadListings() {
       try {
         setLoading(true);
-        const data = await apiRequest<Studio[]>(`/my-listings?email=${user.email}`);
+        const data = await apiRequest<Studio[]>(`/my-listings?email=${email}`);
         if (!Array.isArray(data)) throw new Error('The listings API returned an invalid list.');
         if (active) setListings(data);
       } catch (requestError) {

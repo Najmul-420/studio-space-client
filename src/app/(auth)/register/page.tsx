@@ -109,6 +109,22 @@ import { toast } from 'sonner';
 import { apiRequest, getApiUser } from '@/lib/api';
 import { useAuth } from '@/context/AuthContext';
 
+declare global {
+  interface Window {
+    google: {
+      accounts: {
+        oauth2: {
+          initTokenClient: (options: {
+            client_id: string;
+            scope: string;
+            callback: (response: { access_token?: string }) => void;
+          }) => { requestAccessToken: () => void };
+        };
+      };
+    };
+  }
+}
+
 export default function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');

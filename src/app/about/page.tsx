@@ -69,15 +69,15 @@ export default function AboutPage() {
           </p>
           <ul className="mt-6 space-y-3 text-sm font-medium text-slate-700 dark:text-slate-300">
             <li className="flex items-center gap-2.5">
-              <CheckCircle2 size={18} className="text-sky-600 flex-shrink-0" />
+              <CheckCircle2 size={18} className="text-sky-600 shrink-0" />
               Dynamic search, category filtering, and real-time specs.
             </li>
             <li className="flex items-center gap-2.5">
-              <CheckCircle2 size={18} className="text-sky-600 flex-shrink-0" />
+              <CheckCircle2 size={18} className="text-sky-600 shrink-0" />
               Protected user dashboards for managing listings and reservations.
             </li>
             <li className="flex items-center gap-2.5">
-              <CheckCircle2 size={18} className="text-sky-600 flex-shrink-0" />
+              <CheckCircle2 size={18} className="text-sky-600 shrink-0" />
               Fully responsive design optimized for mobile, tablet, and desktop.
             </li>
           </ul>
