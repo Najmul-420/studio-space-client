@@ -91,6 +91,6 @@ export const config = {
     "/studios/edit/:path*",
     "/my-bookings",
     "/studios",       // Explore studios পেজ এখন প্রাইভেট
-    "/#how-it-works",  // How it works পেজ এখন প্রাইভেট
+    "/how-it-works",  // How it works পেজ এখন প্রাইভেট
   ],
 };

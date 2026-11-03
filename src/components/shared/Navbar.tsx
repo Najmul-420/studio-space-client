@@ -12,7 +12,7 @@ import { useTheme } from '@/context/ThemeContext';
 const navigation = [
   { label: 'Home', href: '/' },
   { label: 'Explore studios', href: '/studios' },
-  { label: 'How it works', href: '/#how-it-works' },
+  { label: 'How it works', href: '/how-it-works' },
   {label: 'About Us', href: '/about'},
 ];
 
@@ -38,7 +38,7 @@ export default function Navbar() {
 
   return (
     <header className="sticky top-0 z-50 border-b border-slate-200/80 bg-white/90 backdrop-blur-xl dark:border-slate-800 dark:bg-slate-950/90">
-      <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-12">
+      <div className="mx-auto flex h-18 max-w-7xl items-center justify-between px-5 sm:px-8 lg:px-12">
         <Link href="/" className="flex items-center gap-2.5 text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
           <span className="inline-flex rounded-xl bg-sky-600 p-2 text-white"><Aperture size={21} /></span>
           StudioSpace

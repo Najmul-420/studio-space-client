@@ -44,7 +44,7 @@ export default function Footer() {
           <ul className="mt-4 space-y-3 text-sm text-slate-400">
             <li><Link href="/" className="transition hover:text-sky-300">Home</Link></li>
             <li><Link href="/studios" className="transition hover:text-sky-300">All studios</Link></li>
-            <li><Link href="/#how-it-works" className="transition hover:text-sky-300">How it works</Link></li>
+            <li><Link href="/how-it-works" className="transition hover:text-sky-300">How it works</Link></li>
             <li><Link href="/add-studio" className="transition hover:text-sky-300">Host your space</Link></li>
           </ul>
         </div>
@@ -72,10 +72,10 @@ export default function Footer() {
               <svg className="size-4 fill-current" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" /></svg>
             </a>
             <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="inline-flex size-10 items-center justify-center rounded-xl bg-slate-900 text-slate-300 transition hover:bg-sky-700 hover:text-white">
-              <svg viewBox="0 0 24 24" className="size-[17px] fill-none stroke-current" strokeWidth="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="18" cy="6" r="1" className="fill-current stroke-none" /></svg>
+              <svg viewBox="0 0 24 24" className="size-4.25 fill-none stroke-current" strokeWidth="1.8" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" /><circle cx="12" cy="12" r="4" /><circle cx="18" cy="6" r="1" className="fill-current stroke-none" /></svg>
             </a>
             <a href="https://youtube.com" target="_blank" rel="noopener noreferrer" aria-label="YouTube" className="inline-flex size-10 items-center justify-center rounded-xl bg-slate-900 text-slate-300 transition hover:bg-sky-700 hover:text-white">
-              <svg viewBox="0 0 24 24" className="size-[18px] fill-current" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12s0 3.8.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12s0-3.8-.5-5.8ZM9.6 15.6V8.4l6.3 3.6z" /></svg>
+              <svg viewBox="0 0 24 24" className="size-4.5 fill-current" aria-hidden="true"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12s0 3.8.5 5.8a3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12s0-3.8-.5-5.8ZM9.6 15.6V8.4l6.3 3.6z" /></svg>
             </a>
           </div>
         </div>
