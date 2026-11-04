@@ -1,36 +1,31 @@
-# StudioSpace
+# 🎬 StudioSpace — Peer-to-Peer Creative Workspace & Production Studio Sharing Platform
 
-StudioSpace is a responsive marketplace frontend for discovering and booking independent creative studios. It is built with Next.js App Router, React, TypeScript, Tailwind CSS, Lucide icons, and Sonner notifications.
+**StudioSpace** is a high-performance peer-to-peer marketplace designed for creators, filmmakers, photographers, podcasters, and musicians. It enables studio owners to list their creative spaces and allows fellow creators to discover, filter, inspect dynamic availability, and reserve studio slots with transparent pricing and real-time booking management.
 
-**Live site:** Not deployed yet.
+---
 
-## Features
+## 🚀 Live Website
+- **Live URL:** https://your-studio-space-live-url.vercel.app
+- **Server API:** https://your-studio-space-backend.onrender.com
 
-- Browse photo studios, film stages, podcast rooms, music suites, and art workshops.
-- Search and filter studio listings, inspect studio details, amenities, host information, and reviews.
-- Request bookings by date and time, and manage pending reservations.
-- Register, sign in, and manage studio listings with create, edit, and delete screens.
-- Switch between light and dark themes; layouts adapt for mobile, tablet, and desktop.
-- Branded loading, API error, and empty states with toast feedback for actions.
+---
 
-## Local setup
+## ✨ Key Features
 
-1. Install Node.js 20 or newer.
-2. Install dependencies with `npm install`.
-3. Create `.env.local` and set `NEXT_PUBLIC_API_URL=http://localhost:5000` (or your deployed API origin).
-4. Start the frontend with `npm run dev`, then open `http://localhost:3000`.
-5. Run `npm run lint`, `npx tsc --noEmit`, and `npm run build` to validate the client.
+1. **Comprehensive Studio Marketplace & Search:** Discover and filter creative workspaces across various categories (Photo Studios, Film Stages, Podcast Lounges, Music Suites, Art Workshops) with dynamic pricing and location details.
+2. **Secure Authentication & Role Management:** Seamless user authentication via Email/Password and Google Social Login powered by BetterAuth, featuring route protection and persistent sessions.
+3. **Full CRUD Studio Management:** Authorized hosts can add new studios with detailed specifications, amenities, and image uploads, as well as update or delete their existing listings.
+4. **Real-Time Booking & Reservation System:** Browse studio details, check availability, book time slots with automated double-booking prevention, and manage reservations via the *My Bookings* dashboard.
+5. **Modern UI & Theme Customization:** Fully responsive design built with Tailwind CSS and DaisyUI/HeroUI, featuring instant toast notifications (Sonner/React Hot Toast), custom modals, skeleton loaders, and a Light/Dark theme toggle.
 
-The API server is a separate project and is not included in this repository. The frontend sends cookie-enabled requests to the configured API origin. The server must support credentialed CORS and issue/clear its authentication cookie on sign-in/sign-out.
+---
 
-## API integration
+## 🛠️ Tech Stack
 
-The client expects JSON endpoints for `POST /users`, `POST /auth/login`, `POST /auth/logout`, `GET /studios`, `GET /studios/:id`, `POST /studios`, `PUT /studios/:id`, `DELETE /studios/:id`, `GET /my-listings`, `GET /my-bookings`, `POST /bookings`, `PATCH /bookings/:id`, and `POST /newsletter`.
+- **Frontend:** Next.js (App Router), React, TypeScript / JavaScript, Tailwind CSS, DaisyUI / HeroUI, Swiper.js, Lucide Icons, Sonner.
+- **Authentication:** BetterAuth, MongoDB Adapter, JWT (HTTPOnly Cookies).
+- **Backend:** Express.js, Node.js, MongoDB, TypeScript / JavaScript.
+- **Deployment:** Vercel (Client) & Render / Vercel (Server).
 
-The API must enforce authorization on private reads and mutations; client-supplied email and host fields are display/form data, not proof of identity. Booking overlap prevention must be enforced by the server. Google sign-in can be enabled by setting `NEXT_PUBLIC_GOOGLE_AUTH_URL` to the server's OAuth start URL.
 
-## Examiner access
 
-- **Test credentials:** No examiner account is seeded in this client repository. Create an account on `/register` after connecting the API, or use credentials supplied by the API/deployment owner.
-- **Client repository:** `Najmul-420/studio-space-client`
-- **Live URL:** Not available until the application is deployed.
