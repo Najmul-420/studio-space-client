@@ -32,6 +32,7 @@ export interface Booking {
   studioId: string;
   studioTitle: string;
   studioImage?: string;
+  userName?: string;
   userEmail: string;
   bookingDate: string;
   startTime: string;

@@ -1,5 +1,3 @@
-
-
 'use client';
 
 import { createContext, useContext, useState, useEffect, startTransition } from 'react';
@@ -39,6 +37,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const email = parsedUser.email;
           const photoUrl = 'photoUrl' in parsedUser && typeof parsedUser.photoUrl === 'string' ? parsedUser.photoUrl : undefined;
 
+          // পেজ রিফ্রেশের পরেও auth_session কুকি নিশ্চিত করা
+          document.cookie = "auth_session=1; path=/; max-age=604800; SameSite=Lax";
+
           startTransition(() => {
             setUser({
               name,
@@ -60,6 +61,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = (userData: User) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+      // auth_session কুকি সেট করা হচ্ছে (non-httpOnly) যা proxy.ts রিড করবে
+      document.cookie = "auth_session=1; path=/; max-age=604800; SameSite=Lax";
       setUser(userData);
     } catch (error) {
       console.error('Unable to save the StudioSpace user.', error);
@@ -74,6 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       console.error(e);
     }
     localStorage.removeItem(STORAGE_KEY);
+    document.cookie = "auth_session=; path=/; max-age=0; SameSite=Lax";
     setUser(null);
   };
 

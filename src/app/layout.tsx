@@ -1,4 +1,5 @@
 import '@/app/globals.css';
+import Script from 'next/script';
 import Navbar from '@/components/shared/Navbar';
 import Footer from '@/components/shared/Footer';
 import { AuthProvider } from '@/context/AuthContext';
@@ -13,8 +14,8 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <script src="https://accounts.google.com/gsi/client" async defer></script>
       <body className="flex min-h-screen flex-col bg-background text-foreground antialiased">
+        <Script src="https://accounts.google.com/gsi/client" strategy="beforeInteractive" />
         <AuthProvider>
           <ThemeProvider>
             <Navbar />

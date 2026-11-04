@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
-import { CalendarDays, Clock3 } from "lucide-react";
+import { CalendarDays, Clock3, UserRound } from "lucide-react";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { apiRequest } from "@/lib/api";
@@ -29,26 +29,33 @@ export default function MyBookingsPage() {
   const [cancellingId, setCancellingId] = useState("");
 
   useEffect(() => {
-    if (!authLoading && !user) router.replace("/login");
+    // authLoading শেষ হওয়ার পর তবেই চেক করবে
+    if (authLoading) return;
+    if (!user) router.replace("/login");
   }, [authLoading, router, user]);
 
   useEffect(() => {
-    if (!user) return;
+    if (!user?.email) return;
+    const currentEmail = user.email.toLowerCase();
+
     let active = true;
     async function loadBookings() {
       try {
-        // const data = await apiRequest<Booking[]>('/my-bookings');
-        // সঠিক কোড
+        setLoading(true);
         const data = await apiRequest<Booking[]>(
-          `/my-bookings?email=${user?.email}`,
+          `/my-bookings?email=${encodeURIComponent(currentEmail)}`,
         );
 
         if (!Array.isArray(data))
           throw new Error("The bookings API returned an invalid list.");
-        // if (active) setBookings(data);
+
         if (active) {
-          // ⬇️ এখানে ফিল্টার করে শুধু active বুকিংগুলো সেভ করবেন
-          const activeBookings = data.filter((item) => item.status !== "Cancelled");
+          // কঠোরভাবে শুধুমাত্র বর্তমান ইউজারের সক্রিয় বুকিং ফিল্টার করা
+          const activeBookings = data.filter(
+            (item) =>
+              item.status !== "Cancelled" &&
+              (!item.userEmail || item.userEmail.toLowerCase() === currentEmail),
+          );
           setBookings(activeBookings);
         }
       } catch (requestError) {
@@ -69,11 +76,9 @@ export default function MyBookingsPage() {
     };
   }, [user]);
 
-  
   const cancelBooking = async (booking: Booking) => {
     setCancellingId(booking._id);
     try {
-      // ব্যাকএন্ডে প্যাচ রিকোয়েস্ট পাঠানো
       await apiRequest<unknown>(
         `/bookings/cancel/${encodeURIComponent(booking._id)}`,
         {
@@ -82,7 +87,6 @@ export default function MyBookingsPage() {
         },
       );
 
-      // সফলভাবে ব্যাকএন্ডে আপডেট হওয়ার পর স্টেট থেকে এই আইডিটি ফিল্টার করে বাদ দেওয়া
       setBookings((currentBookings) =>
         currentBookings.filter((item) => item._id !== booking._id),
       );
@@ -99,7 +103,6 @@ export default function MyBookingsPage() {
     }
   };
 
-  //
   if (authLoading || !user) {
     return (
       <div className="mx-auto max-w-6xl animate-pulse px-5 py-16">
@@ -111,16 +114,27 @@ export default function MyBookingsPage() {
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-12 sm:px-8 lg:px-12">
-      <div>
-        <p className="text-sm font-bold uppercase tracking-[0.2em] text-sky-600">
-          Your upcoming sessions
-        </p>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
-          My bookings
-        </h1>
-        <p className="mt-2 text-slate-500 dark:text-slate-400">
-          Keep track of the spaces and sessions you have reserved.
-        </p>
+      <div className="flex flex-col gap-4 border-b border-slate-200 pb-6 dark:border-slate-800 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm font-bold uppercase tracking-[0.2em] text-sky-600">
+            Your upcoming sessions
+          </p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight text-slate-900 dark:text-white sm:text-4xl">
+            My bookings
+          </h1>
+          <p className="mt-2 text-slate-500 dark:text-slate-400">
+            Showing reserved sessions for{" "}
+            <strong className="text-slate-800 dark:text-slate-200">{user.name}</strong>{" "}
+            ({user.email})
+          </p>
+        </div>
+
+        <Link
+          href="/studios"
+          className="inline-flex items-center gap-2 rounded-xl bg-sky-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-sky-700"
+        >
+          Book another studio
+        </Link>
       </div>
 
       <div className="mt-8">
@@ -166,7 +180,7 @@ export default function MyBookingsPage() {
             {bookings.map((booking) => (
               <article
                 key={booking._id}
-                className="flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white dark:border-slate-800 dark:bg-slate-900 sm:flex-row"
+                className="flex flex-col overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm transition hover:shadow-md dark:border-slate-800 dark:bg-slate-900 sm:flex-row"
               >
                 <div className="relative min-h-48 bg-slate-100 dark:bg-slate-800 sm:w-48 sm:shrink-0">
                   {booking.studioImage ? (
@@ -188,7 +202,7 @@ export default function MyBookingsPage() {
 
                 <div className="flex flex-1 flex-col p-5">
                   <div className="flex items-start justify-between gap-3">
-                    <h2 className="font-bold text-slate-900 dark:text-white">
+                    <h2 className="font-bold text-slate-900 dark:text-white line-clamp-1">
                       {booking.studioTitle}
                     </h2>
                     <span
@@ -197,7 +211,15 @@ export default function MyBookingsPage() {
                       {booking.status}
                     </span>
                   </div>
-                  <div className="mt-4 space-y-2 text-sm text-slate-600 dark:text-slate-400">
+
+                  <div className="mt-3 flex items-center gap-2 rounded-xl bg-slate-50 px-3 py-1.5 text-xs text-slate-600 dark:bg-slate-800/60 dark:text-slate-300">
+                    <UserRound size={13} className="text-sky-600 shrink-0" />
+                    <span className="truncate">
+                      Booked by: <strong>{booking.userName || user.name}</strong> ({booking.userEmail})
+                    </span>
+                  </div>
+
+                  <div className="mt-3 space-y-1.5 text-sm text-slate-600 dark:text-slate-400">
                     <p className="flex items-center gap-2">
                       <CalendarDays size={15} />
                       {new Date(
@@ -209,6 +231,7 @@ export default function MyBookingsPage() {
                       {booking.startTime} – {booking.endTime}
                     </p>
                   </div>
+
                   <div className="mt-auto flex items-center justify-between gap-3 border-t border-slate-100 pt-4 dark:border-slate-800">
                     <p className="font-bold text-slate-900 dark:text-white">
                       ${booking.totalPrice.toFixed(2)}

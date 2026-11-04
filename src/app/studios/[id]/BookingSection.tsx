@@ -1,9 +1,8 @@
-
-
 'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { UserCheck } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
 import { apiRequest } from '@/lib/api';
@@ -33,7 +32,6 @@ export default function BookingSection({ studio }: { studio: Studio }) {
   const handleBookingClick = () => {
     if (!user) {
       toast.error('Sign in before booking a studio.');
-      // ইউজার সাইন ইন না থাকলে বর্তমান পেজের পাথ রিডাইরেক্ট কোয়েরি প্যারামিটার হিসেবে পাঠানো হচ্ছে
       const currentPath = window.location.pathname;
       router.push(`/login?redirect=${encodeURIComponent(currentPath)}`);
       return;
@@ -70,7 +68,7 @@ export default function BookingSection({ studio }: { studio: Studio }) {
           studioId: studio._id,
           studioTitle: studio.title,
           studioImage: studio.thumbnail || studio.imageUrl,
-          userEmail: user.email,
+          userEmail: user.email.toLowerCase(),
           userName: user.name,
           bookingDate,
           startTime,
@@ -83,7 +81,6 @@ export default function BookingSection({ studio }: { studio: Studio }) {
       });
       toast.success('Booking request sent to the host.');
       setIsOpen(false);
-      // বুকিং সফল হলে /my-bookings পেজে পাঠানো হচ্ছে
       router.push('/my-bookings');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Unable to send your booking request.');
@@ -101,7 +98,7 @@ export default function BookingSection({ studio }: { studio: Studio }) {
         Book this workspace
       </button>
 
-      {isOpen && (
+      {isOpen && user && (
         <div 
           className="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/60 p-4" 
           role="presentation" 
@@ -111,7 +108,20 @@ export default function BookingSection({ studio }: { studio: Studio }) {
             <p className="text-sm font-bold uppercase tracking-[0.18em] text-sky-600">Request a reservation</p>
             <h2 id="booking-title" className="mt-2 text-2xl font-bold text-slate-900 dark:text-white">{studio.title}</h2>
             <p className="mt-1 text-sm text-slate-500">${studio.hourlyRate} per hour · Pending host confirmation</p>
-            <form onSubmit={handleBooking} className="mt-6 space-y-4">
+
+            {/* Logged in User Information */}
+            <div className="mt-5 flex items-center gap-3.5 rounded-2xl border border-sky-100 bg-sky-50/70 p-4 text-sm dark:border-sky-950 dark:bg-sky-950/40">
+              <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-sky-600 text-white shadow-sm">
+                <UserCheck size={20} />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-semibold uppercase tracking-wider text-sky-600 dark:text-sky-400">Reserving as</p>
+                <p className="truncate font-bold text-slate-900 dark:text-white">{user.name}</p>
+                <p className="truncate text-xs text-slate-500 dark:text-slate-400">{user.email}</p>
+              </div>
+            </div>
+
+            <form onSubmit={handleBooking} className="mt-5 space-y-4">
               <label className="block text-sm font-semibold">Booking date
                 <input type="date" min={localDateString(new Date())} required value={bookingDate} onChange={(event) => setBookingDate(event.target.value)} className="mt-2 w-full rounded-xl border border-slate-200 bg-white px-4 py-3 outline-none focus:border-sky-500 dark:border-slate-700 dark:bg-slate-950" />
               </label>
@@ -140,5 +150,3 @@ export default function BookingSection({ studio }: { studio: Studio }) {
     </>
   );
 }
-
-

@@ -57,6 +57,7 @@ export default function EditStudioPage() {
       maxCapacity: Number(formData.get('maxCapacity')),
       location: String(formData.get('location') ?? '').trim(),
       imageUrl: String(formData.get('imageUrl') ?? '').trim(),
+      thumbnail: String(formData.get('imageUrl') ?? '').trim(),
       amenities: formData.getAll('amenities').map(String),
       overview: String(formData.get('overview') ?? '').trim(),
       hostName: studio.hostName || user.name,
@@ -106,7 +107,7 @@ export default function EditStudioPage() {
           <label className="text-sm font-semibold">Maximum capacity<input name="maxCapacity" type="number" min="1" step="1" defaultValue={studio.maxCapacity} required className={`${fieldClass} mt-2 font-normal`} /></label>
           <label className="text-sm font-semibold">Location<input name="location" defaultValue={getStudioLocation(studio.location)} required className={`${fieldClass} mt-2 font-normal`} /></label>
         </div>
-        <label className="block text-sm font-semibold">Cover image URL<input name="imageUrl" type="url" defaultValue={studio.imageUrl} required className={`${fieldClass} mt-2 font-normal`} /></label>
+        <label className="block text-sm font-semibold">Cover image URL<input name="imageUrl" type="url" defaultValue={studio.imageUrl || studio.thumbnail || ''} required className={`${fieldClass} mt-2 font-normal`} /></label>
         <label className="block text-sm font-semibold">Studio overview<textarea name="overview" rows={5} defaultValue={studio.overview} maxLength={3000} required className={`${fieldClass} mt-2 resize-y font-normal`} /></label>
         <fieldset>
           <legend className="text-sm font-semibold">Amenities</legend>

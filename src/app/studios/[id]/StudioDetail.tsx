@@ -25,8 +25,7 @@ export default function StudioDetail({ id }: { id: string }) {
           throw new Error("The studio API returned an invalid listing.");
         if (active) {
           setStudio(data);
-          setSelectedImage(data.thumbnail || data.images?.[0] || "");
-          // setSelectedImage(data.imageUrl);
+          setSelectedImage(data.thumbnail || data.imageUrl || data.images?.[0] || "");
         }
       } catch (requestError) {
         if (active) {
@@ -87,13 +86,14 @@ export default function StudioDetail({ id }: { id: string }) {
     );
   }
 
-  const images = Array.from(
+  const allImages = Array.from(
     new Set(
-      [...(studio?.images ?? [])].filter((img): img is string => Boolean(img)),
+      [studio.thumbnail, studio.imageUrl, ...(studio.images ?? [])].filter(
+        (img): img is string => Boolean(img),
+      ),
     ),
-  ).filter((img) => img !== studio?.thumbnail);
-
-
+  );
+  const galleryImages = allImages.filter((img) => img !== selectedImage);
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-12">
@@ -132,30 +132,30 @@ export default function StudioDetail({ id }: { id: string }) {
           <Image
             src={
               selectedImage ||
-              studio?.imageUrl ||
-              studio?.thumbnail ||
-              studio?.images?.[0] ||
+              studio.thumbnail ||
+              studio.imageUrl ||
+              studio.images?.[0] ||
               "/window.svg"
             }
-            alt={studio?.title || "Studio image"}
+            alt={studio.title || "Studio image"}
             fill
             priority
             unoptimized
             sizes="(max-width: 1024px) 100vw, 65vw"
             className="object-cover"
           />
-
         </div>
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
-          {studio.imageUrl && studio.imageUrl !== selectedImage && (
+          {galleryImages.slice(0, 3).map((img, idx) => (
             <button
+              key={`${img}-${idx}`}
               type="button"
-              onClick={() => setSelectedImage(studio.imageUrl)}
-              aria-label="View studio photo"
-              className={`relative min-h-36 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800 sm:min-h-52 lg:min-h-0 ${selectedImage === studio.imageUrl ? "ring-2 ring-sky-500" : ""}`}
+              onClick={() => setSelectedImage(img)}
+              aria-label={`View studio photo ${idx + 1}`}
+              className="relative min-h-36 overflow-hidden rounded-2xl bg-slate-100 dark:bg-slate-800 sm:min-h-52 lg:min-h-0"
             >
               <Image
-                src={studio.imageUrl}
+                src={img}
                 alt=""
                 fill
                 unoptimized
@@ -163,9 +163,7 @@ export default function StudioDetail({ id }: { id: string }) {
                 className="object-cover transition hover:scale-105"
               />
             </button>
-          )}
-
-          
+          ))}
         </div>
       </div>
 

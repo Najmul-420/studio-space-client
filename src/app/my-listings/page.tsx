@@ -123,7 +123,7 @@ export default function MyListingsPage() {
                       <td className="px-5 py-4">
                         <div className="flex items-center gap-3">
                           <div className="relative size-14 shrink-0 overflow-hidden rounded-xl bg-slate-100 dark:bg-slate-800">
-                            <Image src={studio.imageUrl || '/window.svg'} alt="" fill unoptimized sizes="56px" className="object-cover" />
+                            <Image src={studio.thumbnail || studio.imageUrl || '/window.svg'} alt="" fill unoptimized sizes="56px" className="object-cover" />
                           </div>
                           <Link href={`/studios/${studio._id}`} className="font-semibold text-slate-900 hover:text-sky-700 dark:text-white dark:hover:text-sky-400">{studio.title}</Link>
                         </div>

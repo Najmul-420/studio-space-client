@@ -38,6 +38,7 @@ export default function AddStudioPage() {
       maxCapacity: Number(formData.get('maxCapacity')),
       location: String(formData.get('location') ?? '').trim(),
       imageUrl: String(formData.get('imageUrl') ?? '').trim(),
+      thumbnail: String(formData.get('imageUrl') ?? '').trim(),
       amenities: formData.getAll('amenities').map(String),
       overview: String(formData.get('overview') ?? '').trim(),
       hostName: user.name,
