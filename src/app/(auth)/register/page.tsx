@@ -182,7 +182,7 @@ export default function RegisterPage() {
               const googleUser = await userInfoRes.json();
 
               // ব্যাকএন্ডের /auth/google রাউটে ডাটা পাঠানো
-              const backendResponse = await apiRequest<any>("/auth/google", {
+              const backendResponse = await apiRequest<unknown>("/auth/google", {
                 method: "POST",
                 body: JSON.stringify({
                   email: googleUser.email,
@@ -199,8 +199,8 @@ export default function RegisterPage() {
               login(user);
               toast.success("Successfully registered with Google!");
               router.push("/");
-            } catch (err: any) {
-              toast.error(err.message || "Google authentication failed.");
+            } catch (err) {
+              toast.error(err instanceof Error ? err.message : "Google authentication failed.");
             } finally {
               setLoading(false);
             }

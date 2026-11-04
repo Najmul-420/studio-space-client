@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { Aperture, Menu, Moon, Sun, UserRound, X } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '@/context/AuthContext';
-// import { useTheme } from '@/context/ThemeContext';
+
 import { useTheme } from '@/context/ThemeContext'; 
 
 const navigation = [

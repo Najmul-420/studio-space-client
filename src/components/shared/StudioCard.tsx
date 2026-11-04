@@ -18,13 +18,7 @@ export default function StudioCard({ studio }: { studio: Studio }) {
           height={250}
           className="object-cover w-full h-full"
         />
-        {/* <Image
-          src={studio.images?.[0] || "/window.svg"}
-          alt={studio.title}
-          width={400}
-          height={250}
-          className="object-cover w-full h-full"
-        /> */}
+     
         <span className="absolute left-4 top-4 rounded-full bg-white/95 px-3 py-1 text-xs font-semibold text-slate-800 shadow-sm">
           {studio.category}
         </span>

@@ -93,14 +93,7 @@ export default function StudioDetail({ id }: { id: string }) {
     ),
   ).filter((img) => img !== studio?.thumbnail);
 
-  // const images = Array.from(
-  //   new Set(
-  //     [studio.thumbnail, ...(studio.images ?? [])].filter(
-  //       (img): img is string => Boolean(img),
-  //     ),
-  //   ),
-  // );
-  // const images = Array.from(new Set([studio.imageUrl, ...(studio.images ?? [])].filter(Boolean)));
+
 
   return (
     <div className="mx-auto max-w-7xl px-5 py-10 sm:px-8 lg:px-12">
@@ -152,21 +145,6 @@ export default function StudioDetail({ id }: { id: string }) {
             className="object-cover"
           />
 
-          {/* <Image
-            src={
-              selectedImage ||
-              studio.thumbnail ||
-              studio.images?.[0] ||
-              "/window.svg"
-            }
-            alt={studio.title}
-            fill
-            priority
-            unoptimized
-            sizes="(max-width: 1024px) 100vw, 65vw"
-            className="object-cover"
-          /> */}
-          {/* <Image src={selectedImage || '/window.svg'} alt={studio.title} fill priority unoptimized sizes="(max-width: 1024px) 100vw, 65vw" className="object-cover" /> */}
         </div>
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-1">
           {studio.imageUrl && studio.imageUrl !== selectedImage && (
